@@ -127,7 +127,7 @@ function getAngleBetweenVectors(x1, y1, x2, y2) {
  *     0     => 0
  */
 function getLastDigit(value) {
-    return value.toString().slice(-1);
+    return +value.toString().slice(-1);
 }
 
 
@@ -202,7 +202,9 @@ function roundToPowerOfTen(num, pow) {
  *   17 => true
  */
 function isPrime(n) {
-    for (let i = 2; i < n; i += 1) if (n % i === 0) return false;
+    for (let i = 2; i < n; i += 1){
+        if (n % i === 0) return false;
+    } 
     return n > 1;
 }
 
@@ -222,7 +224,10 @@ function isPrime(n) {
  *   toNumber(new Number(42), 0) => 42
  */
 function toNumber(value, def) {
-    if (Number.isNaN(Number.parseFloat(value))) { return def; } return Number.parseFloat(value);
+    if (Number.isNaN(Number.parseFloat(value))) { 
+        return def; 
+    } 
+    return Number.parseFloat(value);
 }
 
 module.exports = {

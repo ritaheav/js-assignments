@@ -55,8 +55,7 @@ function generateOdds(len) {
  *    [] => [] 
  */
 function doubleArray(arr) {
-   arr.map((el) => arr.push(el));
-   return arr;
+   return arr.concat(arr);
 }
 
 

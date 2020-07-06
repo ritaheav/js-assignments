@@ -80,18 +80,30 @@ function isLeapYear(date) {
  *    Date(2000,1,1,10,0,0),  Date(2000,1,1,15,20,10,453)   => "05:20:10.453"
  */
 function timeSpanToString(startDate, endDate) {
-   let time = endDate.getTime() - startDate.getTime();
-   let ms = (("000") + time % 1000); 
-   ms = ms.substr(ms.length - 3, 3);
-   time = Math.floor(time / 1000);
-   let s = (("00") + time % 60); 
-   s = s.substr(s.length - 2, 2);
-   time = Math.floor(time / 60);
-   let m = (("00") + time % 60); 
-   m = m.substr(m.length - 2, 2);
-   time = (("00") + Math.floor(time / 60)); 
-   time = time.substr(time.length - 2, 2);
-   return [time, m, s].join(':') + "." + ms;
+   let hours = (endDate.getDay() - startDate.getDay()) * 24 + endDate.getHours() - startDate.getHours();
+   if (hours < 10) hours = '0' + hours;
+   let minutes = endDate.getMinutes() - startDate.getMinutes();
+   if (minutes < 10) minutes = '0' + minutes;
+   let seconds = endDate.getSeconds() - startDate.getSeconds();
+   if (seconds < 10) seconds = '0' + seconds;
+   let milsec = endDate.getMilliseconds() - startDate.getMilliseconds();
+   if (milsec < 100 && milsec >= 10) milsec = '0' + milsec;
+   if (milsec < 10) milsec = '00' + milsec;
+   return `${hours}:${minutes}:${seconds}.${milsec}`;
+
+//    let hours  = (endDate.getHours()- startDate.getHours()).toString();
+//   if (hours.length < 2) hours = "0" + hours;
+
+//   let minutes  = (endDate.getMinutes()- startDate.getMinutes()).toString();
+//   if (minutes.length < 2) minutes = "0" + minutes;
+//   let second = (endDate.getSeconds() - startDate.getSeconds()).toString();
+//   if ( second.length < 2 )  second = "0" + second;
+
+//    var milsec = (endDate.getMilliseconds() - startDate.getMilliseconds()).toString();
+//    if (milsec.length == 1) milsec = "00" + milsec;
+//    else if (milsec.length == 2) milsec = "0" + milsec;
+
+//    return hours + ":" + minutes + ":" + second + "." + milsec; 
 }
 
 
