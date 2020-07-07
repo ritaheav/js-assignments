@@ -22,7 +22,8 @@
  *    'Sun, 17 May 1998 03:00:00 GMT+01' => Date()
  */
 function parseDataFromRfc2822(value) {
-   throw new Error('Not implemented');
+   const data = new Date(value);
+   return data;
 }
 
 /**
@@ -37,7 +38,8 @@ function parseDataFromRfc2822(value) {
  *    '2016-01-19T08:07:37Z' => Date()
  */
 function parseDataFromIso8601(value) {
-   throw new Error('Not implemented');
+   const data = new Date(value);
+   return data;
 }
 
 
@@ -56,7 +58,9 @@ function parseDataFromIso8601(value) {
  *    Date(2015,1,1)    => false
  */
 function isLeapYear(date) {
-   throw new Error('Not implemented');
+   const data = date.getFullYear();
+   if (data % 400 === 0 || (data % 4 === 0 && data % 100 !== 0)) { return true; }
+   return false;
 }
 
 
@@ -76,7 +80,30 @@ function isLeapYear(date) {
  *    Date(2000,1,1,10,0,0),  Date(2000,1,1,15,20,10,453)   => "05:20:10.453"
  */
 function timeSpanToString(startDate, endDate) {
-   throw new Error('Not implemented');
+   let hours = (endDate.getDay() - startDate.getDay()) * 24 + endDate.getHours() - startDate.getHours();
+   if (hours < 10) hours = '0' + hours;
+   let minutes = endDate.getMinutes() - startDate.getMinutes();
+   if (minutes < 10) minutes = '0' + minutes;
+   let seconds = endDate.getSeconds() - startDate.getSeconds();
+   if (seconds < 10) seconds = '0' + seconds;
+   let milsec = endDate.getMilliseconds() - startDate.getMilliseconds();
+   if (milsec < 100 && milsec >= 10) milsec = '0' + milsec;
+   if (milsec < 10) milsec = '00' + milsec;
+   return `${hours}:${minutes}:${seconds}.${milsec}`;
+
+//    let hours  = (endDate.getHours()- startDate.getHours()).toString();
+//   if (hours.length < 2) hours = "0" + hours;
+
+//   let minutes  = (endDate.getMinutes()- startDate.getMinutes()).toString();
+//   if (minutes.length < 2) minutes = "0" + minutes;
+//   let second = (endDate.getSeconds() - startDate.getSeconds()).toString();
+//   if ( second.length < 2 )  second = "0" + second;
+
+//    var milsec = (endDate.getMilliseconds() - startDate.getMilliseconds()).toString();
+//    if (milsec.length == 1) milsec = "00" + milsec;
+//    else if (milsec.length == 2) milsec = "0" + milsec;
+
+//    return hours + ":" + minutes + ":" + second + "." + milsec; 
 }
 
 
@@ -94,7 +121,11 @@ function timeSpanToString(startDate, endDate) {
  *    Date.UTC(2016,3,5,21, 0) => Math.PI/2
  */
 function angleBetweenClockHands(date) {
-    throw new Error('Not implemented');
+   const hour = date.getUTCHours() > 12 ? date.getUTCHours() - 12 : date.getUTCHours();
+   const minutes = date.getUTCMinutes() * 6;
+   const hours = 0.5 * (60 * hour + date.getUTCMinutes());
+   const angle = hours - minutes > 180 ? hours - minutes - 180 : hours - minutes;
+   return (Math.PI * Math.abs(angle)) / 180;
 }
 
 
