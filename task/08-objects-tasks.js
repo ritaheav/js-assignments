@@ -25,7 +25,9 @@
 function Rectangle(width, height) {
     this.width = width;
     this.height = height;
-    this.getArea = () => this.width * this.height;
+}
+Rectangle.prototype.getArea = function() {
+    return this.height * this.width;
 }
 
 
@@ -56,7 +58,7 @@ function getJSON(obj) {
  *
  */
 function fromJSON(proto, json) {
-    throw new Error('Not implemented');
+    return Object.assign(new proto.constructor(), JSON.parse(json));
 }
 
 
