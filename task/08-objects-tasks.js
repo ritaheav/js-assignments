@@ -23,7 +23,11 @@
  *    console.log(r.getArea());   // => 200
  */
 function Rectangle(width, height) {
-    throw new Error('Not implemented');
+    this.width = width;
+    this.height = height;
+}
+Rectangle.prototype.getArea = function() {
+    return this.height * this.width;
 }
 
 
@@ -38,7 +42,7 @@ function Rectangle(width, height) {
  *    { width: 10, height : 20 } => '{"height":10,"width":20}'
  */
 function getJSON(obj) {
-    throw new Error('Not implemented');
+    return JSON.stringify(obj);
 }
 
 
@@ -54,7 +58,7 @@ function getJSON(obj) {
  *
  */
 function fromJSON(proto, json) {
-    throw new Error('Not implemented');
+    return Object.assign(new proto.constructor(), JSON.parse(json));
 }
 
 
@@ -106,35 +110,86 @@ function fromJSON(proto, json) {
  *  For more examples see unit tests.
  */
 
-const cssSelectorBuilder = {
+function error(turn1, turn2, name1, name2) {
+    if (turn1 > turn2) {
+        throw new Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
+    }
+    if (name1 === name2 && name1 === 'element' || name1 === 'id' || name1 === 'pseudoElement') {
+        throw new Error('Element, id and pseudo-element should not occur more then one time inside the selector')
+    }
+}
 
+const cssSelectorBuilder = {
+    value: '',
+   
     element: function(value) {
-        throw new Error('Not implemented');
+        const turn = 1;
+        const name = 'element';
+        error(this.turn, turn, this.name, name);
+        const obj = Object.create(cssSelectorBuilder);
+        obj.value = this.value + value;
+        obj.turn = turn;
+        obj.name = name;
+        return obj;
     },
 
     id: function(value) {
-        throw new Error('Not implemented');
+        const turn = 2;
+        const name = 'id';
+        error(this.turn, turn, this.name, name);
+        const obj = Object.create(cssSelectorBuilder);
+        obj.value = this.value + '#' + value;
+        obj.turn = turn;
+        obj.name = name;
+        return obj;
     },
 
     class: function(value) {
-        throw new Error('Not implemented');
+        const turn = 3;
+        error(this.turn, turn);
+        const obj = Object.create(cssSelectorBuilder);
+        obj.value = this.value + '.' + value;
+        obj.turn = turn;
+        return obj;
     },
 
     attr: function(value) {
-        throw new Error('Not implemented');
+        const turn = 4;
+        error(this.turn, turn);
+        const obj = Object.create(cssSelectorBuilder);
+        obj.value = this.value + '[' + value + ']';
+        obj.turn = turn;
+        return obj;
     },
 
     pseudoClass: function(value) {
-        throw new Error('Not implemented');
+        const turn = 5;
+        error(this.turn, turn);
+        const obj = Object.create(cssSelectorBuilder);
+        obj.value = this.value + ':' + value;
+        obj.turn = turn;
+        return obj;
     },
 
     pseudoElement: function(value) {
-        throw new Error('Not implemented');
+        const turn = 6;
+        const name = 'pseudoElement';
+        error(this.turn, turn, this.name, name);
+        const obj = Object.create(cssSelectorBuilder);
+        obj.value = this.value + '::' + value;
+        obj.turn = turn;
+        obj.name = name;
+        return obj;
     },
 
     combine: function(selector1, combinator, selector2) {
-        throw new Error('Not implemented');
+        const obj = Object.create(cssSelectorBuilder);
+        obj.value = selector1.value + " " + combinator + " " + selector2.value;
+        return obj;
     },
+    stringify: function() {
+        return this.value;
+    }
 };
 
 
