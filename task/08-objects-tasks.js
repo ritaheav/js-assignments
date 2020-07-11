@@ -110,116 +110,86 @@ function fromJSON(proto, json) {
  *  For more examples see unit tests.
  */
 
-class Selector {
-    constructor() {
-        this.classes = [];
-        this.attrs = [];
-        this.pseudoClasses = [];
-        this.unused = ['element', 'id', 'class', 'attr', 'pseudoClass', 'pseudoElement', 'combine'];
+function error(turn1, turn2, name1, name2) {
+    if (turn1 > turn2) {
+        throw new Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
     }
-
-    static get duplicateError() {
-        return new Error("Element, id and pseudo-element should not occur more then one time inside the selector");
+    if (name1 === name2 && name1 === 'element' || name1 === 'id' || name1 === 'pseudoElement') {
+        throw new Error('Element, id and pseudo-element should not occur more then one time inside the selector')
     }
-
-    static get orderError() {
-        return new Error("Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element");
-    }
-
-    order_check(curr_elem) {
-        if (!this.unused.includes(curr_elem)) throw Selector.orderError;
-        while(this.unused[0] != curr_elem) this.unused.shift();
-    }
-
-    element(value) {
-        this.order_check('element');
-        if(this.element_val) throw Selector.duplicateError;
-        this.element_val = value;
-        return this;
-    }
-
-    id(value) {
-        this.order_check('id');
-        if(this.id_val) throw Selector.duplicateError;
-        this.id_val = value;
-        return this;
-    }
-
-    class(value) {
-        this.order_check('class');
-        this.classes.push(value);
-        return this;
-    }
-
-    attr(value) {
-        this.order_check('attr');
-        this.attrs.push(value);
-        return this;
-    }
-
-    pseudoClass(value) {
-        this.order_check('pseudoClass');
-        this.pseudoClasses.push(value);
-        return this;
-    }
-
-    pseudoElement(value) {
-        this.order_check('pseudoElement');
-        if(this.pseudoElement_val) throw Selector.duplicateError;
-        this.pseudoElement_val = value;
-        return this;
-    }
-
-    combine(selector1, combinator, selector2) {
-        this.order_check('combine');
-        Object.assign(this, selector1);
-        this.combinator = combinator;
-        this.selector2 = selector2;
-        return this;
-    }
-
-    stringify() {
-        let ans = '';
-        ans += (this.element_val || '');
-        if (this.id_val) ans += '#' + this.id_val;
-        this.classes.forEach(elem => ans += '.' + elem);
-        this.attrs.forEach(elem => ans += '[' + elem + ']');
-        this.pseudoClasses.forEach(elem => ans += ':' + elem);
-        if (this.pseudoElement_val) ans += '::' + this.pseudoElement_val;
-        if (this.combinator && this.selector2) ans += ' ' + this.combinator + ' ' + this.selector2.stringify();
-        return ans;
-    }
-} 
+}
 
 const cssSelectorBuilder = {
+    value: '',
    
     element: function(value) {
-        return new Selector().element(value);
+        const turn = 1;
+        const name = 'element';
+        error(this.turn, turn, this.name, name);
+        const obj = Object.create(cssSelectorBuilder);
+        obj.value = this.value + value;
+        obj.turn = turn;
+        obj.name = name;
+        return obj;
     },
 
     id: function(value) {
-        return new Selector().id(value);
+        const turn = 2;
+        const name = 'id';
+        error(this.turn, turn, this.name, name);
+        const obj = Object.create(cssSelectorBuilder);
+        obj.value = this.value + '#' + value;
+        obj.turn = turn;
+        obj.name = name;
+        return obj;
     },
 
     class: function(value) {
-        return new Selector().class(value);
+        const turn = 3;
+        error(this.turn, turn);
+        const obj = Object.create(cssSelectorBuilder);
+        obj.value = this.value + '.' + value;
+        obj.turn = turn;
+        return obj;
     },
 
     attr: function(value) {
-        return new Selector().attr(value);
+        const turn = 4;
+        error(this.turn, turn);
+        const obj = Object.create(cssSelectorBuilder);
+        obj.value = this.value + '[' + value + ']';
+        obj.turn = turn;
+        return obj;
     },
 
     pseudoClass: function(value) {
-        return new Selector().pseudoClass(value);
+        const turn = 5;
+        error(this.turn, turn);
+        const obj = Object.create(cssSelectorBuilder);
+        obj.value = this.value + ':' + value;
+        obj.turn = turn;
+        return obj;
     },
 
     pseudoElement: function(value) {
-        return new Selector().pseudoElement(value);
+        const turn = 6;
+        const name = 'pseudoElement';
+        error(this.turn, turn, this.name, name);
+        const obj = Object.create(cssSelectorBuilder);
+        obj.value = this.value + '::' + value;
+        obj.turn = turn;
+        obj.name = name;
+        return obj;
     },
 
     combine: function(selector1, combinator, selector2) {
-        return new Selector().combine(selector1, combinator, selector2);
+        const obj = Object.create(cssSelectorBuilder);
+        obj.value = selector1.value + " " + combinator + " " + selector2.value;
+        return obj;
     },
+    stringify: function() {
+        return this.value;
+    }
 };
 
 
