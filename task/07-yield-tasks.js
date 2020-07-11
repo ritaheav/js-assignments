@@ -193,7 +193,14 @@ function* mergeSortedSequences(source1, source2) {
  *   Most popular implementation of the logic in npm https://www.npmjs.com/package/co
  */
 function async(generator) {
-    throw new Error('Not implemented');
+    let newGenerator = generator();
+    return Promise.resolve((function nextGen(val){
+        let genObj = newGenerator.next(val);
+        if(genObj.done){
+            return genObj.value; 
+        }
+        return genObj.value.then(nextGen);
+    })());
 }
 
 
