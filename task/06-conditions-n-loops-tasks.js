@@ -384,7 +384,32 @@ function isBracketsBalanced(str) {
  *
  */
 function timespanToHumanString(startDate, endDate) {
-    throw new Error('Not implemented');
+    let diffDate = new Date(endDate) - new Date(startDate) - 1 / 1000;
+    let day = diffDate / 1000 / 60 / 60 / 24;
+    let hour = diffDate / 1000 / 60 / 60;
+    let minute = diffDate / 1000 / 60;
+    let secund = diffDate / 1000;
+    if (day >= 545)
+       return (Math.round(day / 365)) + " years ago";
+    else if (day >= 345)
+        return "a year ago";
+    else if (day >= 45)
+       return (Math.round(day / 30)) + " months ago";
+    else if (day >= 25)
+       return "a month ago";
+    else if (hour >= 36)
+       return (Math.round(day)) + " days ago";
+    else if (hour >= 22)
+       return "a day ago";
+    else if (minute >= 90)
+       return (Math.round(hour)) + " hours ago";
+    else if (minute >= 45)
+       return "an hour ago";
+    else if (secund >= 90)
+       return (Math.round(minute)) + " minutes ago";
+    else if (secund >= 45)
+       return "a minute ago";
+    else return "a few seconds ago";
 }
 
 
@@ -504,7 +529,21 @@ function getMatrixProduct(m1, m2) {
  *
  */
 function evaluateTicTacToePosition(position) {
-    throw new Error('Not implemented');
+    if((position[0][0] == position[1][1]) && (position[0][0] == position[2][2]) && (position[1][1] == position[2][2]))
+        if(position[0][0])
+            return position[0][0];
+    if((position[0][2] == position[1][1]) && (position[0][2] == position[2][0]) && (position[1][1] == position[2][0]))
+        if(position[0][2])
+            return position[0][2];
+    for(let i = 0; i < 3; i++){
+        if((position[i][0] == position[i][1]) && (position[i][0] == position[i][2]) && (position[i][1] == position[i][2]))
+            if(position[i][0])
+                return position[i][1];
+        if ((position[0][i] == position[1][i]) && (position[0][i] == position[2][i]) && (position[1][i] == position[2][i]))
+            if(position[0][i])
+                return position[1][i];
+    }
+    return undefined;
 }
 
 
